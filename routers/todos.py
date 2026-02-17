@@ -57,9 +57,7 @@ async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
 # API Path to add task
 @router.post("/todo", status_code=status.HTTP_201_CREATED, response_model=TodoReturn)
 async def create_todo(db: db_dependency, todo_request: TodoRequest):
-    new_task_to_add_to_db = Todos(**todo_request.model_dump())
-
-    print(new_task_to_add_to_db)
+    new_task_to_add_to_db = Todos(**todo_request.model_dump(), owner_id=1)
 
     db.add(new_task_to_add_to_db)
     db.commit()

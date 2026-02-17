@@ -13,7 +13,7 @@ class Users(Base):
     last_name: Mapped[str] = mapped_column()
     hashed_password: Mapped[str] = mapped_column()
     is_active: Mapped[bool] = mapped_column(default=True)
-    role: Mapped[str] = mapped_column()
+    role: Mapped[str | None] = mapped_column()
 
 class Todos(Base):
     __tablename__ = 'todods'
@@ -23,6 +23,6 @@ class Todos(Base):
     description: Mapped[str | None] = mapped_column()
     priority: Mapped[int] = mapped_column()
     complete: Mapped[bool] = mapped_column(default=False)
-    # owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
 
