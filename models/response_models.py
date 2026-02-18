@@ -23,3 +23,7 @@ class UserReturn(BaseModel):
     role: str = Field(description='Retuned user role')
 
     model_config = ConfigDict(from_attributes=True)
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

@@ -9,6 +9,7 @@ from models.response_models import TodoReturn
 from models.todo_models import TodoRequest
 from models.db_models import Todos
 from database.database import SessionLocal
+from .auth import get_current_user
 
 router = APIRouter(
     prefix = "/todos",
@@ -27,6 +28,8 @@ def get_db() -> Generator[Session, None]:
 # Next with above being used across each and every API call, needs to be added as dependency for each of the path callables.
 db_dependency = Annotated[Session, Depends(get_db)]
 
+user_dependency = Annotated[dict, Depends(get_current_user)]
+
 # APIs to build:
 # 1. Read All tasks
 # 2. Read 1 task by id
@@ -37,15 +40,21 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 # API Path for reading all the todos in the document
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[TodoReturn])
-async def get_all_todos(db: db_dependency):
-    sql_stmt = select(Todos)
+async def get_all_todos(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
+    
+    sql_stmt = select(Todos).where(Todos.owner_id == user.get('id'))
 
     return db.scalars(statement=sql_stmt).all()
 
 # API Path to read task by id
-@router.get("/todo/{todo_id}", status_code=status.HTTP_200_OK, response_model=TodoReturn)
-async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
-    sql_stmt = select(Todos).where(Todos.id == todo_id)
+@router.get("/todos/{todo_id}", status_code=status.HTTP_200_OK, response_model=TodoReturn)
+async def get_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
+    
+    sql_stmt = select(Todos).where(Todos.owner_id == user.get('id')).where(Todos.id == todo_id)
 
     task_model_result = db.scalars(statement=sql_stmt).first()
 
@@ -55,9 +64,12 @@ async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
     return task_model_result
 
 # API Path to add task
-@router.post("/todo", status_code=status.HTTP_201_CREATED, response_model=TodoReturn)
-async def create_todo(db: db_dependency, todo_request: TodoRequest):
-    new_task_to_add_to_db = Todos(**todo_request.model_dump(), owner_id=1)
+@router.post("/todos", status_code=status.HTTP_201_CREATED, response_model=TodoReturn)
+async def create_todo(user: user_dependency, db: db_dependency, todo_request: TodoRequest):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
+    
+    new_task_to_add_to_db = Todos(**todo_request.model_dump(), owner_id=user.get('id'))
 
     db.add(new_task_to_add_to_db)
     db.commit()
@@ -66,9 +78,12 @@ async def create_todo(db: db_dependency, todo_request: TodoRequest):
     return new_task_to_add_to_db
 
 # API Path to update a task
-@router.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)#, response_model=TodoReturn)
-async def update_todo_by_id(db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
-    sql_stmt = select(Todos).where(Todos.id == todo_id)
+@router.put("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)#, response_model=TodoReturn)
+async def update_todo_by_id(user: user_dependency, db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
+    
+    sql_stmt = select(Todos).where(Todos.owner_id == user.get('id')).where(Todos.id == todo_id)
 
     task_model_result = db.scalars(statement=sql_stmt).first()
 
@@ -84,9 +99,12 @@ async def update_todo_by_id(db: db_dependency, todo_request: TodoRequest, todo_i
         db.commit()
  
 # API Path to delete a task
-@router.delete("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
-    sql_stmt = select(Todos).where(Todos.id == todo_id)
+@router.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
+    
+    sql_stmt = select(Todos).where(Todos.owner_id == user.get('id')).where(Todos.id == todo_id)
 
     task_model_result = db.scalars(statement=sql_stmt).first()
 
