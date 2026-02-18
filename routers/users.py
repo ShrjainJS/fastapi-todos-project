@@ -3,7 +3,7 @@ from typing import Annotated, List
 from sqlalchemy.orm import Session # This it to get the type for Dependency injection
 from sqlalchemy import select
 
-from passlib.context import CryptContext
+from utils.auth_utils import hash_password
 
 from models.db_models import Users
 from models.user_req_models import UpdateUserRequest, UpdatePasswordRequest
@@ -15,8 +15,6 @@ router = APIRouter(
     prefix='/user',
     tags = ['User Details Data']
 )
-
-bycrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 def get_db():
     db = SessionLocal()
@@ -90,7 +88,7 @@ async def update_password(user: user_dependecy, db: db_dependency, update_reques
     if user_model_result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found.')
     
-    user_model_result.hashed_password = bycrypt_context.hash(update_request.new_password)
+    user_model_result.hashed_password = hash_password(update_request.new_password)
 
     db.commit()
 

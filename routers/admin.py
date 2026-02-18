@@ -4,7 +4,7 @@ from typing import Annotated, List
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from passlib.context import CryptContext
+from utils.auth_utils import hash_password
 
 from database.database import SessionLocal
 from models.db_models import Users, Todos
@@ -25,8 +25,6 @@ router = APIRouter(
     prefix='/admin',
     tags=['Admin Controls']
 )
-
-bycrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
@@ -54,7 +52,7 @@ async def get_all_user_details(user: user_dependency, db: db_dependency):
     if user.get('role') != 'admin':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Unauthorize access.')
     
-    sql_stmt = select(Users).where(Users.id == user.get('id'))
+    sql_stmt = select(Users)
 
     return db.scalars(sql_stmt).all()
 
@@ -167,7 +165,7 @@ async def update_password_by_id(user: user_dependency, db: db_dependency, update
     if user_model_result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found.')
     
-    user_model_result.hashed_password = bycrypt_context.hash(update_request.new_password)
+    user_model_result.hashed_password = hash_password(update_request.new_password)
 
     db.commit()
 
@@ -190,7 +188,7 @@ async def update_password_by_username(user: user_dependency, db: db_dependency, 
     if user_model_result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found.')
     
-    user_model_result.hashed_password = bycrypt_context.hash(update_request.new_password)
+    user_model_result.hashed_password = hash_password(update_request.new_password)
 
     db.commit()
 

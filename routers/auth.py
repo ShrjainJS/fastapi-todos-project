@@ -4,7 +4,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session # This it to get the type for Dependency injection
 from sqlalchemy import select
 
-from passlib.context import CryptContext
+from utils.auth_utils import hash_password, verify_password
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 
@@ -17,8 +17,6 @@ router = APIRouter(
     prefix='/auth',
     tags = ['Authentication']
 )
-
-bycrpt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 def get_db():
     db = SessionLocal()
@@ -37,7 +35,7 @@ def authenticate_user(username: str, password: str, db: Session):
     if user_model_result is None:
         return False
     
-    if not bycrpt_context.verify(password, user_model_result.hashed_password):
+    if not verify_password(password_passed=password, hashed_password=user_model_result.hashed_password):
         return False
     
     return user_model_result
@@ -101,7 +99,7 @@ async def create_user(db: db_dependency, create_request: CreateUserRequest):
         username=create_request.username,
         first_name=create_request.first_name,
         last_name=create_request.last_name,
-        hashed_password=bycrpt_context.hash(create_request.password),
+        hashed_password=hash_password(create_request.password),
         role=create_request.role,
         is_active=True
     )
