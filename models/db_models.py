@@ -16,7 +16,7 @@ class Users(Base):
     role: Mapped[str | None] = mapped_column()
 
 class Todos(Base):
-    __tablename__ = 'todods'
+    __tablename__ = 'todos'
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column()
