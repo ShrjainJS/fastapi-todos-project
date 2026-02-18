@@ -101,7 +101,8 @@ async def create_user(db: db_dependency, create_request: CreateUserRequest):
         last_name=create_request.last_name,
         hashed_password=hash_password(create_request.password),
         role=create_request.role,
-        is_active=True
+        is_active=True,
+        phone_number=create_request.phone_number
     )
 
     db.add(new_user_model)

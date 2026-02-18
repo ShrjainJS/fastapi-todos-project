@@ -68,6 +68,7 @@ async def update_user_details(user: user_dependecy, db: db_dependency, update_re
     user_model_result.last_name = update_request.last_name
     user_model_result.is_active = update_request.is_active
     user_model_result.role = update_request.role
+    user_model_result.phone_number = update_request.phone_number
 
 
     db.commit()

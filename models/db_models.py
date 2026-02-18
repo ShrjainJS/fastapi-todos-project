@@ -14,6 +14,7 @@ class Users(Base):
     hashed_password: Mapped[str] = mapped_column()
     is_active: Mapped[bool] = mapped_column(default=True)
     role: Mapped[str | None] = mapped_column()
+    phone_number: Mapped[str] = mapped_column()
 
 class Todos(Base):
     __tablename__ = 'todos'

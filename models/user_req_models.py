@@ -7,6 +7,7 @@ class CreateUserRequest(BaseModel):
     last_name: str = Field(description='Provide a last name')
     password: str = Field(description='Provide a password', min_length=8)
     role: str | None = Field(description='type of user', default = None)
+    phone_number: str = Field(description='User Phone number')
 
 class UpdateUserRequest(BaseModel):
     username: str = Field(description='Provide a Username', min_length=3)
@@ -15,6 +16,7 @@ class UpdateUserRequest(BaseModel):
     last_name: str = Field(description='Provide a last name')
     is_active: bool = Field(description='is the user still active?')
     role: str | None = Field(description='type of user', default = None)
+    phone_number: str = Field(description='User Phone number')
 
 class UpdatePasswordRequest(BaseModel):
     password: str = Field(description='Old Password to change', min_length=8)

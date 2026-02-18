@@ -21,6 +21,7 @@ class UserReturn(BaseModel):
     hashed_password: str = Field(description='password hashed')
     is_active: bool = Field(description='Is user active?')
     role: str = Field(description='Retuned user role')
+    phone_number: str | None = Field(description='Returned phone number')
 
     model_config = ConfigDict(from_attributes=True)
 
