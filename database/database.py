@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 
 # SQLALCHEMY_DB_URL_SQLite = "sqlite:///./todosapp.db"
 SQLALCHEMY_DB_URL_POSTGRESQL = "postgresql://postgres:postgres@localhost/TodoApplicationDatabase"
