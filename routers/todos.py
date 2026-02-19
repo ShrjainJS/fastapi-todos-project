@@ -49,7 +49,7 @@ async def get_all_todos(user: user_dependency, db: db_dependency):
     return db.scalars(statement=sql_stmt).all()
 
 # API Path to read task by id
-@router.get("/todos/{todo_id}", status_code=status.HTTP_200_OK, response_model=TodoReturn)
+@router.get("/{todo_id}", status_code=status.HTTP_200_OK, response_model=TodoReturn)
 async def get_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
@@ -64,7 +64,7 @@ async def get_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int 
     return task_model_result
 
 # API Path to add task
-@router.post("/todos", status_code=status.HTTP_201_CREATED, response_model=TodoReturn)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=TodoReturn)
 async def create_todo(user: user_dependency, db: db_dependency, todo_request: TodoRequest):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
@@ -78,7 +78,7 @@ async def create_todo(user: user_dependency, db: db_dependency, todo_request: To
     return new_task_to_add_to_db
 
 # API Path to update a task
-@router.put("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)#, response_model=TodoReturn)
+@router.put("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)#, response_model=TodoReturn)
 async def update_todo_by_id(user: user_dependency, db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
@@ -99,7 +99,7 @@ async def update_todo_by_id(user: user_dependency, db: db_dependency, todo_reque
         db.commit()
  
 # API Path to delete a task
-@router.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not able to verify user credentials.')
