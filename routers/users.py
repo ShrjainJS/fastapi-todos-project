@@ -80,7 +80,7 @@ async def update_user_details(user: user_dependecy, db: db_dependency, update_re
 @router.put("/update-password", status_code=status.HTTP_204_NO_CONTENT)
 async def update_password(user: user_dependecy, db: db_dependency, update_request: UpdatePasswordRequest):
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_NOT_FOUND, detail='Failed to authenticate user.')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Failed to authenticate user.')
     
     sql_stmt = select(Users).where(Users.id == user.get('id'))
 
