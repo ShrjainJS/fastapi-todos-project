@@ -303,7 +303,7 @@ async def create_todo(user: user_dependency, db: db_dependency, todo_request: To
     return new_task_to_add_to_db
 
 @router.delete('/todos/{todo_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_node(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
+async def delete_note_by_id(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Unauthorize access.')
     
