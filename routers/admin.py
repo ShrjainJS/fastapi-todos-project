@@ -265,7 +265,7 @@ async def get_todo_by_id(user: user_dependency, db: db_dependency, todo_id: int 
     
     return task_model_result
 
-@router.put('/todos/{todo_id}', status_code=status.HTTP_200_OK, response_model=TodoReturn)
+@router.put('/todos/{todo_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def update_todo_by_id(user: user_dependency, db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Unauthorize access.')
