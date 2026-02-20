@@ -41,7 +41,7 @@ user_dependecy = Annotated[dict, Depends(get_current_user)]
 # 8. Delete User by id
 # 9. Delete User by username
 
-@router.get("/get-user", status_code=status.HTTP_200_OK, response_model=List[UserReturn])
+@router.get("/get-user", status_code=status.HTTP_200_OK, response_model=UserReturn)
 async def get_user_detail(user: user_dependecy, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, details='Failed to authenticate user.')
