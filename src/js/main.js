@@ -257,3 +257,13 @@ function logout() {
   // Redirect to the login page
   window.location.href = "/auth/login-page";
 }
+
+// 2. Attach it to the button by ID
+// Ensure your HTML button has id="logoutButton"
+const logoutBtn = document.getElementById("logoutButton");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault(); // Stop the default link behavior
+    logout();
+  });
+}
