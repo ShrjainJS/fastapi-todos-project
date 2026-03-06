@@ -20,6 +20,7 @@ BASE_DIR_TEMPLATE = Path(__file__).resolve().parent
 # 1st Argument: is a URL prefix for the browser - Purpose is API design and organisation
 # 2nd Argument: StaticFiles is a static file serving engine which serves static files (with directory specifying where static files are) when browser hits url as identified in 1st argument.
 # 3rd Argument: Used by Python + Jinja to use variable name for "url_for()" method which is the standard way to add links to the files from the project using Jinja templating engine 
+# This would still remain the same when move to frontend-build branch as dist location is maintained inside layout.html
 app.mount("/static", StaticFiles(directory=str(BASE_DIR_TEMPLATE/"static")), name="static")
 
 @app.get("/")
