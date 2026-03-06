@@ -48,3 +48,7 @@ htmlcov/
 adhoc_samples.py
 learnings
 *.db
+
+# Front End Modules
+node_modules/
+static/dist/
