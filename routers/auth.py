@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from typing import Annotated
 from sqlalchemy.orm import Session # This it to get the type for Dependency injection
 from sqlalchemy import select
@@ -12,6 +12,9 @@ from models.db_models import Users
 from models.user_req_models import CreateUserRequest
 from models.response_models import UserReturn, Token
 from database.database import SessionLocal
+
+from fastapi.templating import Jinja2Templates
+from pathlib import Path
 
 router = APIRouter(
     prefix='/auth',
@@ -88,6 +91,19 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+BASE_DIR_TEMPLATE = Path(__file__).resolve().parent.parent
+templates = Jinja2Templates(directory=str(BASE_DIR_TEMPLATE/"templates"))
+
+## Pages ##
+@router.get("/login-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@router.get("/register-page")
+def render_register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+## Endpoints ##
 # APIs to Create
 # 1. Create User
 # 2. Login User
